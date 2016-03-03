@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html lan = "en">
+<title> taieanstatG || 重力球 </title>
+<head>
+	<meta charset = "utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<!-- Firebase -->
+	<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+
+	<!-- jquery -->
+	<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+
+	<!-- d3 -->
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+    <!-- css -->
+    <link type = "text/css" rel = "stylesheet" href = "index.css">
+
+    <style>
+      @import url(http://fonts.googleapis.com/earlyaccess/cwtexhei.css);
+    </style>
+
+</head>
+
+<body>
+
+	<div id='messagesDiv'></div>
+	<div id = "welcome">
+		<div id = "backing">
+			<p id = "welcome_text"></p>
+		</div>
+	</div>
+	<input type='text' id='nameInput' placeholder='姓名'>
+	<input type='text' id='schoolInput' placeholder='電機資訊學院(下拉式)'>
+	<input type='text' id='departmentInput' placeholder='資訊系(下拉式)'>
+	<input type='text' id='whereInput' placeholder='地區'>
+	<input type='text' id='starInput' placeholder='星座'>
+    <input type='text' id='messageInput' placeholder='Message'>
+
+    <div id = "main_pic">
+		<svg width = "900" height = "800" > 
+			<text class = "name_text" id = "text_1" x="200" y="300" font-size="1em" text-anchor="middle"> 文、管理、社科學院</text> 
+			<text class = "name_text" id = "text_2" x="600" y="300" font-size="1em" text-anchor="middle"> 理、工、生科學院</text> 
+			<text class = "name_text" id = "text_3" x="200" y="700" font-size="1em" text-anchor="middle"> 電機資訊學院</text> 
+			<text class = "name_text" id = "text_4" x="600" y="700" font-size="1em" text-anchor="middle"> 規設、醫學院</text> 
+		</svg>
+	</div>
+</body>
+
+
+<script src="index.js" charset="utf-8"></script>
+
+
+</html>
