@@ -139,11 +139,6 @@ $('#messageInput').keypress(function(e) {
         var area = $('#whereInput').val();
         var star = $('#starInput').val();
         var message = $('#messageInput').val();
-
-        var schoolNum = 0;		//判斷學院 變數 
-        var areaNum = 0 ;		//判斷地區 變數
-        var starNum = 0 ;		//判斷星座 變數
-
         var setNum = setChangeNum( school , area , star);		//輸入陣列變數
 
         //後端資料庫
@@ -209,6 +204,7 @@ $('body').keypress(function(e) {
 
     	if (change_toggle != 1) {
         	change_toggle = 1;
+            window.clearInterval(autoInterval_id);
 
         	force.charge(-30);
         } else {
