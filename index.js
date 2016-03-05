@@ -2,7 +2,7 @@
 <未除BUG>
 1.若要使用highlight效果，welcome block會擋住node 而無法點擊
 (現在只要先選其他隨便沒被擋住的一顆，即可解除狀況！)
-2.autoplay 完回來change_toggle = 0，會變成狂暴狀態！！？
+2.autoplay 完回來change_toggle = 0，會變成狂暴狀態！！？ ==> 按空白鍵可回復....
  //----------*/
 
 
