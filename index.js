@@ -142,8 +142,9 @@ var force = d3.layout.force()
 
 //Firebase 資料庫
 var i = 0;
-//公用的 var myDataRef = new Firebase('https://o47un23yblt.firebaseio-demo.com/');
-var myDataRef = new Firebase('https://flickering-heat-4075.firebaseio.com');
+//公用的 
+var myDataRef = new Firebase('https://o47un23yblt.firebaseio-demo.com/');
+
 
 //半徑
 var r = 0, radius = 0;
