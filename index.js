@@ -2,7 +2,6 @@
 <未除BUG>
 1.若要使用highlight效果，welcome block會擋住node 而無法點擊
 (現在只要先選其他隨便沒被擋住的一顆，即可解除狀況！)
-2.autoplay 完回來change_toggle = 0，會變成狂暴狀態！！？ ==> 按空白鍵可回復....
  //----------*/
 
 
@@ -14,7 +13,7 @@ var color_star = d3.scale.linear().domain([1, 2, 3, 4]).range(["#D33948", "#FCDF
 var width = 900 , height = 800;
 var svg = d3.select("svg");
 
-var nodes = [];
+var nodes = [] , name_q = [];
 var node = svg.selectAll(".node");
 
 // 4點位置座標
@@ -43,6 +42,9 @@ function tick(e) {
 
     //  利用按鍵改變模式
     if (change_toggle == 0) {
+
+        force.gravity(0)
+
         // Push nodes toward their designated focus.
         // forEach(value , index , obj)
         nodes.forEach(function(o, i) {
@@ -51,11 +53,11 @@ function tick(e) {
 
             var r = Math.sqrt(Math.pow(o.x - 400, 2) + Math.pow(o.y - 200, 2));
             if (r < 110 && r != 0) {
-                o.x += 1.1 * (o.x - 400) / r;
-                o.y += 1.1 * (o.y - 200) / r;
+                o.x += 1.1 * (o.x - 400) / (r+20);
+                o.y += 1.1 * (o.y - 200) / (r+20);
             } else if (r > 140 && r != 0) {
-                o.x -= 1.1 * (o.x - 400) / r;
-                o.y -= 1.1 * (o.y - 400) / r;
+                o.x -= 1.1 * (o.x - 400) / (r+20);
+                o.y -= 1.1 * (o.y - 400) / (r+20);
             }
         });
 
@@ -76,6 +78,7 @@ function tick(e) {
             o.y += (foci[o.setNum[0]].y - o.y) * k;
             o.x += (foci[o.setNum[0]].x - o.x) * k;
         });
+
     } else if (change_toggle == 3) {
         force.gravity(0.4);
 
@@ -84,6 +87,7 @@ function tick(e) {
             o.y += (foci[o.setNum[1]].y - o.y) * k;
             o.x += (foci[o.setNum[1]].x - o.x) * k;
         });
+
     } else if (change_toggle == 4) {
         force.gravity(0.4);
 
@@ -92,6 +96,7 @@ function tick(e) {
             o.y += (foci[o.setNum[2]].y - o.y) * k;
             o.x += (foci[o.setNum[2]].x - o.x) * k;
         });
+
     } else if (change_toggle == 5) {
         force.gravity(0.4);
 
@@ -100,6 +105,7 @@ function tick(e) {
             o.y += (foci_two[o.setNum[3]].y - o.y) * k;
             o.x += (foci_two[o.setNum[3]].x - o.x) * k;
         });
+
     } else if (change_toggle == 6) {
         force.gravity(0.4);
 
@@ -141,67 +147,13 @@ var force = d3.layout.force()
     .on("tick", tick);
 
 //Firebase 資料庫
+//公用的 var myDataRef = new Firebase('https://o47un23yblt.firebaseio-demo.com/');
+var myDataRef = new Firebase('https://flickering-heat-4075.firebaseio.com');
+var nodeList = myDataRef.child('nodes');
+var nameList = myDataRef.child('nameRecord');
+//半徑 球的數量
 var i = 0;
-//公用的 
-var myDataRef = new Firebase('https://o47un23yblt.firebaseio-demo.com/');
-
-
-//半徑
 var r = 0, radius = 0;
-
-$('#messageInput').keypress(function(e) {
-    if (e.keyCode == 13) {
-
-        var name = $('#nameInput').val();
-        var sex = $('#sexualInput').val();
-        var school = $('#schoolInput').val();
-        var department = $('#departmentInput').val();
-        var area = $('#whereInput').val();
-        var star = $('#starInput').val();
-        var message = $('#messageInput').val();
-        var age = $('#ageInput').val();
-        var setNum = setChangeNum( school , age , area, sex , star);        //輸入陣列變數
-
-        //後端資料庫
-        myDataRef.push({
-            'name': name,
-            'sex': sex,
-            'school': school,
-            'department': department,
-            'area': area,
-            'star': star,
-            'age': age,
-            'message': message,
-            'setNum': setNum
-        });
-
-        //輸入完之後清空想說的話
-        $('#messageInput').val('');
-
-        //出現歡迎box
-    $('#welcome_text').html("~歡迎 :&nbsp;&nbsp;<em><span id = \"welcome_name\">" + name + "</span></em>&nbsp;&nbsp;&nbsp;到來~");
-
-    $("#welcome").fadeTo("slow", 1);
-    $("#welcome").delay(700).fadeTo("normal", 0);
-
-    //放大球球 (已經i++後了 , 所以要-1)
-    d3.select("#circle" + (i - 1))
-        .transition()
-        .duration(1000)
-        .attr("r", 200)
-        .transition()
-        .duration(500)
-        .attr("r", r);
-        
-    };
-
-    //可以輸入空白鍵
-    if ( e.keyCode == 32 ) {
-        stop_toggle = 1;
-    }
-});
-
-
 
 // space    => 無重力狀態
 //  z       => 暫停/開始
@@ -255,8 +207,6 @@ $('body').keypress(function(e) {
         if (change_toggle != 1) {
             change_toggle = 1;
             window.clearInterval(autoInterval_id);
-
-            force.charge(-30);
         } else {
             change_toggle = 0;
         }
@@ -294,15 +244,13 @@ $('body').keypress(function(e) {
     }
 });
 
-
 // 後端data 傳回來
 // Math.random() => 0 ~ 0.99999
-myDataRef.on('child_added', function(snapshot) {
+nodeList.on('child_added', function(snapshot) {
 
     //擷取資料 => myDateRef
     var person = snapshot.val();
 
-    console.log(person.age);
     //用age 判斷r
     radius = setRadius(person.age);
 
@@ -347,22 +295,45 @@ myDataRef.on('child_added', function(snapshot) {
 
     d3.select("#ID" + i).append("text")
         .attr("class", "g_text")
-        .attr("dx", 20)
+        .attr("dx", 23)
         .attr("dy", ".35em")
         .text(function(d) {
             return d.name
         });
-
     console.log(nodes);
-    console.log(i)
+
+    //放大球球 (已經i++後了 , 所以要-1)
+    d3.select("#circle" + i)
+        .transition()
+        .duration(1000)
+        .attr("r", 200)
+        .transition()
+        .duration(500)
+        .attr("r", r); 
 
     //計算node 數量
     i++;
-
-    
 });
 
+nameList.on("child_added",function(snapshot){
 
+    name_q.push({'name':snapshot.val().name});
+
+    //出現歡迎box
+    $('#welcome_text').html("~歡迎 :&nbsp;&nbsp;<em><span id = \"welcome_name\">" + name_q[0].name + "</span></em>&nbsp;&nbsp;&nbsp;到來~");
+
+    $("#welcome").fadeTo("slow", 1);
+    $("#welcome").delay(700).fadeTo("normal", 0);
+    console.log(name_q);
+    name_q.pop();
+    //留下最新的
+    nameList.remove();
+});
+/*
+setInterval(function(){
+    name_q.pop();
+} , 1000)
+*/
 //Colide Function
 function collide(node) {
     var r = node.radius + 20,
@@ -521,6 +492,22 @@ function setRadius(age) {
             return 21;
     }
 }
+
+function show_name( )
+{
+    var q = 0 ;
+    while ( q == 0)
+    {
+        //出現歡迎box
+        $('#welcome_text').html("~歡迎 :&nbsp;&nbsp;<em><span id = \"welcome_name\">" + nodes[i-1].name + "</span></em>&nbsp;&nbsp;&nbsp;到來~");
+
+        $("#welcome").fadeTo("slow", 1);
+        $("#welcome").delay(700).fadeTo("normal", 0);
+        q=1;
+        console.log("111111111");
+    }
+}
+
 //爆炸 => 還未用到
 function explosion() {
     nodes.forEach(function(o, i) {
@@ -529,85 +516,5 @@ function explosion() {
     });
     force.resume();
 }
-function setChangeNum( school , age , area, sex ,star)
-{
-    switch ( school )
-    {
-        case "文學院" :
-        case "管理學院" :
-        case "社會科學院" :
-            school = 1 ; break ;
-        case "理學院" :
-        case "工學院" :
-        case "生物科學與科技學院" :
-            school = 2 ; break ;
-        case "電機資訊學院" :
-            school = 3 ; break ;
-        case "規劃與設計學院" :
-        case "醫學院" :
-            school = 4 ; break ;
-        default:
-            school = 0; break ;
-    }
-    switch(area)
-    {
-        case "北部":
-            area = 1 ; break;
-        case "中部":
-            area = 2 ; break;
-        case "東部":
-            area = 3 ; break;
-        case "南部":
-            area = 4 ; break;
-        default:
-            area = 0 ;
-    }
-    switch(age)
-    {
-        case "大一":
-            age = 1 ; break;
-        case "大二":
-            age = 2 ; break;
-        case "大三":
-            age = 3 ; break;
-        case "大四":
-            age = 4 ; break;
-        default:
-            age = 0 ;
-    }
-    switch(sex)
-    {
-        case "man":
-            sex = 1 ; break;
-        case "woman":
-            sex = 2 ; break;
-        default:
-            sex = 0 ;
-    }
-    switch(star)
-    {
-        case "牡羊座" :
-        case "獅子座" :
-        case "射手座" :
-            star = 1 ; break;
-        case "金牛座" :
-        case "處女座" :
-        case "摩羯座" :
-            star = 2 ; break;
-        case "雙子座" :
-        case "天秤座" :
-        case "水瓶座" :
-            star = 3 ; break;
-        case "雙魚座" :
-        case "巨蟹座" :
-        case "天蠍座" :
-            star = 4 ; break;
-        default :
-            star = 0 ; break;
-    }
 
-    var setNum = [school , age , area , sex ,star] ;
-
-    return setNum;
-}
 
