@@ -13,7 +13,7 @@ var color_star = d3.scale.linear().domain([1, 2, 3, 4]).range(["#D33948", "#FCDF
 var width = 900 , height = 800;
 var svg = d3.select("svg");
 
-var nodes = [] , name_q = [];
+var nodes = [] , name_q = [] , big_q = [];
 var node = svg.selectAll(".node");
 
 // 4點位置座標
@@ -302,38 +302,59 @@ nodeList.on('child_added', function(snapshot) {
         });
     console.log(nodes);
 
-    //放大球球 (已經i++後了 , 所以要-1)
-    d3.select("#circle" + i)
+    //計算node 數量
+    i++;
+});
+
+
+nameList.on("child_added",function(snapshot){
+
+    name_q.push({'name':snapshot.val().name});
+    big_q.push({'id':i-1});
+
+    console.log(name_q);
+    console.log(big_q);
+    //防止重新整理時welcome_text跑出
+    nameList.remove();
+    show_name();
+});
+
+function show_name(){
+    if (name_q.length == 0)
+        ;
+    else{
+        $('#welcome_text').html("~歡迎 :&nbsp;&nbsp;<em><span id = \"welcome_name\">" + name_q[0].name + "</span></em>&nbsp;&nbsp;&nbsp;到來~");
+        $("#welcome").fadeTo("slow", 1 , big);
+        $("#welcome").delay(700).fadeTo("normal", 0 , shift_name_q);
+    }
+}
+
+function shift_name_q(){
+    name_q.shift();
+    if (name_q.length == 0)
+        ;
+    else
+        $('#welcome_text').html("~歡迎 :&nbsp;&nbsp;<em><span id = \"welcome_name\">" + name_q[0].name + "</span></em>&nbsp;&nbsp;&nbsp;到來~");
+        //放大球球 (已經i++後了 , 所以要-1) 
+}
+
+function big(){
+    if (big_q.length == 0)
+        ;
+    else{
+        d3.select("#circle" + big_q[0].id)
         .transition()
         .duration(1000)
         .attr("r", 200)
         .transition()
         .duration(500)
-        .attr("r", r); 
+        .attr("r", r)
+        .call(function(){
+            big_q.shift();
+        });
+    }
+}
 
-    //計算node 數量
-    i++;
-});
-
-nameList.on("child_added",function(snapshot){
-
-    name_q.push({'name':snapshot.val().name});
-
-    //出現歡迎box
-    $('#welcome_text').html("~歡迎 :&nbsp;&nbsp;<em><span id = \"welcome_name\">" + name_q[0].name + "</span></em>&nbsp;&nbsp;&nbsp;到來~");
-
-    $("#welcome").fadeTo("slow", 1);
-    $("#welcome").delay(700).fadeTo("normal", 0);
-    console.log(name_q);
-    name_q.pop();
-    //留下最新的
-    nameList.remove();
-});
-/*
-setInterval(function(){
-    name_q.pop();
-} , 1000)
-*/
 //Colide Function
 function collide(node) {
     var r = node.radius + 20,
@@ -490,21 +511,6 @@ function setRadius(age) {
             return r;
         default:
             return 21;
-    }
-}
-
-function show_name( )
-{
-    var q = 0 ;
-    while ( q == 0)
-    {
-        //出現歡迎box
-        $('#welcome_text').html("~歡迎 :&nbsp;&nbsp;<em><span id = \"welcome_name\">" + nodes[i-1].name + "</span></em>&nbsp;&nbsp;&nbsp;到來~");
-
-        $("#welcome").fadeTo("slow", 1);
-        $("#welcome").delay(700).fadeTo("normal", 0);
-        q=1;
-        console.log("111111111");
     }
 }
 
