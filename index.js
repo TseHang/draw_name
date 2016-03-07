@@ -17,8 +17,9 @@ var nodes = [] , name_q = [] , big_q = [];
 var node = svg.selectAll(".node");
 
 // 4點位置座標
-var foci = [{ x: 300, y: 650 }, { x: -800, y: -600 }, { x: 1400, y: -600 }, { x: -800, y: 1000 }, { x: 1400, y: 1000 }];
-var foci_two = [{ x: 300, y: 1000 }, { x: -800, y: 400 }, { x: 1400, y: 400 }];
+var foci = [{ x: 350, y: 600 }, { x: -800, y: -600 }, { x: 1400, y: -600 }, { x: -800, y: 1000 }, { x: 1400, y: 1000 }];
+var foci_updown = [{x:350 , y:650} , {x:-400 , y: -800} , {x: 1600, y:0} , {x: -1000, y:500} , {x: 700, y: 1100}];
+var foci_two = [{ x: 350, y: 1000 }, { x: -800, y: 400 }, { x: 1400, y: 400 }];
 /* 12點位置座標
 var foci_star = [{x: 400 , y:2000} , {x: -1000 , y: -700},{x: -100 , y: -700} , {x :800 , y :-700} , {x :1700 , y :-700} ,{x: -800 , y: 400},{x: 0 , y: 400} , {x :800 , y :400} , {x :1600 , y :400} , {x: -1000 , y: 1500},{x: -100 , y: 1500} , {x :800 , y :1500} , {x :1700 , y :1500}];
 */
@@ -93,8 +94,8 @@ function tick(e) {
 
         // Push nodes toward their designated focus.
         nodes.forEach(function(o, i) {
-            o.y += (foci[o.setNum[2]].y - o.y) * k;
-            o.x += (foci[o.setNum[2]].x - o.x) * k;
+            o.y += (foci_updown[o.setNum[2]].y - o.y) * k;
+            o.x += (foci_updown[o.setNum[2]].x - o.x) * k;
         });
 
     } else if (change_toggle == 5) {
@@ -111,8 +112,8 @@ function tick(e) {
 
         // Push nodes toward their designated focus.
         nodes.forEach(function(o, i) {
-            o.y += (foci[o.setNum[4]].y - o.y) * k;
-            o.x += (foci[o.setNum[4]].x - o.x) * k;
+            o.y += (foci_updown[o.setNum[4]].y - o.y) * k;
+            o.x += (foci_updown[o.setNum[4]].x - o.x) * k;
         });
     }
 
@@ -312,8 +313,8 @@ nameList.on("child_added",function(snapshot){
     name_q.push({'name':snapshot.val().name});
     big_q.push({'id':i-1});
 
-    console.log(name_q);
-    console.log(big_q);
+    //console.log(name_q);
+    //console.log(big_q);
     //防止重新整理時welcome_text跑出
     nameList.remove();
     show_name();
@@ -330,12 +331,12 @@ function show_name(){
 }
 
 function shift_name_q(){
-    name_q.shift();
+    var c = name_q.shift();
+    console.log(c);
     if (name_q.length == 0)
         ;
     else
         $('#welcome_text').html("~歡迎 :&nbsp;&nbsp;<em><span id = \"welcome_name\">" + name_q[0].name + "</span></em>&nbsp;&nbsp;&nbsp;到來~");
-        //放大球球 (已經i++後了 , 所以要-1) 
 }
 
 function big(){
@@ -343,15 +344,15 @@ function big(){
         ;
     else{
         d3.select("#circle" + big_q[0].id)
-        .transition()
-        .duration(1000)
-        .attr("r", 200)
-        .transition()
-        .duration(500)
-        .attr("r", r)
-        .call(function(){
-            big_q.shift();
-        });
+            .transition()
+            .duration(1000)
+            .attr("r", 200)
+            .transition()
+            .duration(500)
+            .attr("r", r)
+            .call(function(){
+                big_q.shift();
+            });
     }
 }
 
@@ -429,6 +430,10 @@ function slideFlow() {
         $('#text_5').text("");
         $('#text_6').text("");
         $('#text_7').text("");
+        $('#text_8').text("");
+        $('#text_9').text("");
+        $('#text_10').text("");
+        $('#text_11').text("");
         d3.selectAll(".circle").style("fill", function(d) {
                 return color(d.radius);
             }) //依照星座去選顏色
@@ -444,16 +449,24 @@ function slideFlow() {
             $('#text_5').text("????");
             $('#text_6').text("");
             $('#text_7').text("");
+            $('#text_8').text("");
+            $('#text_9').text("");
+            $('#text_10').text("");
+            $('#text_11').text("");
 
         }
         if (change_toggle == 4) {
-            $('#text_1').text("北部人");
-            $('#text_2').text("中部人");
-            $('#text_3').text("東部人");
-            $('#text_4').text("南部人");
+            $('#text_1').text("");
+            $('#text_2').text("");
+            $('#text_3').text("");
+            $('#text_4').text("");
             $('#text_5').text("");
             $('#text_6').text("");
             $('#text_7').text("");
+            $('#text_8').text("北部人");
+            $('#text_9').text("東部人");
+            $('#text_10').text("中部人");
+            $('#text_11').text("南部人");
 
         }
         if (change_toggle == 5) {
@@ -464,19 +477,27 @@ function slideFlow() {
             $('#text_5').text("");
             $('#text_6').text("Boys!!");
             $('#text_7').text("Girls!!");
+            $('#text_8').text("");
+            $('#text_9').text("");
+            $('#text_10').text("");
+            $('#text_11').text("");
 
             d3.selectAll(".circle").style("fill", function(d) {
                     return color_sex(d.setNum[3]);
                 }) //依照性別去選顏色
         }
         if (change_toggle == 6) {
-            $('#text_1').text("火象星座");
-            $('#text_2').text("土象星座");
-            $('#text_3').text("風象星座");
-            $('#text_4').text("水象星座");
+            $('#text_1').text("");
+            $('#text_2').text("");
+            $('#text_3').text("");
+            $('#text_4').text("");
             $('#text_5').text("");
             $('#text_6').text("");
             $('#text_7').text("");
+            $('#text_8').text("火象星座");
+            $('#text_9').text("土象星座");
+            $('#text_10').text("風象星座");
+            $('#text_11').text("水象星座");
 
             d3.selectAll(".circle").style("fill", function(d) {
                     return color_star(d.setNum[4]);

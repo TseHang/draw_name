@@ -16,7 +16,7 @@ var r = 0 , radius = 0;
 
 $('#messageInput').keypress(function(e) {
     if (e.keyCode == 13) {
-        
+
         var name = $('#nameInput').val();
         var sex = $('#sexualInput').val();
         var school = $('#schoolInput').val();
@@ -82,9 +82,9 @@ function setChangeNum( school , age , area, sex ,star)
 	{
 		case "北部":
 			area = 1 ; break;
-		case "中部":
-			area = 2 ; break;
 		case "東部":
+			area = 2 ; break;
+		case "中部":
 			area = 3 ; break;
 		case "南部":
 			area = 4 ; break;
