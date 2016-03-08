@@ -2,7 +2,6 @@ body{
   padding:0;
   margin:0;
   font-family: 'cwTeXHei', sans-serif;
-  height: 90%;
 }
 .node text{
   font-size: 12px;
@@ -38,10 +37,29 @@ body{
 #welcome_icon{
   font-size:12px;
 }
-#main_pic{
+#main{
   width:100%;
   text-align: center;
 }
 .name_text{
   opacity: 0;
+}
+#logo{
+  position: relative;
+  top:2em;
+  left:-3em;
+  line-height: 35px;
+}
+#logo_chinese{
+  font-weight: 900;
+  color:#FD5275;
+  font-size: 55px;
+}
+#logo_english{
+  font-size: 25px;
+}
+.data_text{
+  position: relative;
+  font-size: 0px;
+  font-family: 'Frijole', cursive;
 }

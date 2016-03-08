@@ -16,37 +16,7 @@ var r = 0 , radius = 0;
 
 $('#messageInput').keypress(function(e) {
     if (e.keyCode == 13) {
-
-        var name = $('#nameInput').val();
-        var sex = $('#sexualInput').val();
-        var school = $('#schoolInput').val();
-        var department = $('#departmentInput').val();
-        var area = $('#whereInput').val();
-        var star = $('#starInput').val();
-        var message = $('#messageInput').val();
-        var age = $('#ageInput').val();
-        var setNum = setChangeNum( school , age , area, sex , star);		//輸入陣列變數
-
-        //後端資料庫
-        nodeList.push({
-            'name': name,
-            'sex': sex,
-            'school': school,
-            'department': department,
-            'area': area,
-            'star': star,
-            'age': age,
-            'message': message,
-            'setNum': setNum
-        });
-
-        nameList.push({
-            'name':name
-        });
-
-        //輸入完之後清空想說的話
-        $('#messageInput').val('');
-        
+        submit();
     };
 
     //可以輸入空白鍵
@@ -55,6 +25,48 @@ $('#messageInput').keypress(function(e) {
     }
 
 });
+
+$('#submit').click(function(e){
+
+    //把原本html動作擋掉
+    e.preventDefault();
+    console.log("click");
+    submit();
+})
+function submit() {
+
+    console.log("submit");
+    var name = $('#nameInput').val();
+    var sex = $('#sexualInput').val();
+    var school = $('#schoolInput').val();
+    var department = $('#departmentInput').val();
+    var area = $('#whereInput').val();
+    var star = $('#starInput').val();
+    var message = $('#messageInput').val();
+    var age = $('#ageInput').val();
+    var setNum = setChangeNum(school, age, area, sex, star); //輸入陣列變數
+
+    //後端資料庫
+    nodeList.push({
+        'name': name,
+        'sex': sex,
+        'school': school,
+        'department': department,
+        'area': area,
+        'star': star,
+        'age': age,
+        'message': message,
+        'setNum': setNum,
+        'vy':0.3
+    });
+
+    nameList.push({
+        'name': name
+    });
+
+    //重新整理
+    //window.location.reload();
+}
 
 
 
@@ -94,15 +106,16 @@ function setChangeNum( school , age , area, sex ,star)
     switch(age)
     {
         case "大一":
-            age = 1 ; break;
         case "大二":
-            age = 2 ; break;
+            age = 1 ; break;
         case "大三":
-            age = 3 ; break;
+            age = 2 ; break;
         case "大四":
+            age = 3 ; break;
+        case "碩博":
             age = 4 ; break;
         default:
-            age = 0 ;
+            age = 0 ; break;
     }
     switch(sex)
     {
@@ -139,4 +152,5 @@ function setChangeNum( school , age , area, sex ,star)
 
 	return setNum;
 }
+
 
