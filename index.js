@@ -24,13 +24,13 @@ var count = [{position0:0 , position1:0 , position2:0 , position3:0 , position4:
 var foci_star = [{x: 400 , y:2000} , {x: -1000 , y: -700},{x: -100 , y: -700} , {x :800 , y :-700} , {x :1700 , y :-700} ,{x: -800 , y: 400},{x: 0 , y: 400} , {x :800 , y :400} , {x :1600 , y :400} , {x: -1000 , y: 1500},{x: -100 , y: 1500} , {x :800 , y :1500} , {x :1700 , y :1500}];
 */
 
-var stop_toggle = 0, change_toggle = 0, autoplay_toggle = 0, color_toggle = 0 , drop_toggle = 0 , eye_toggle = 0;
+var stop_toggle = 0, change_toggle = 0, autoplay_toggle = 0, color_toggle = 0 , drop_toggle = 0 , eye_toggle = 0 , name_toggle = 0;
 var beforeState = 0 ;
 var autoInterval_id , setTimeAnalysis_id0 , setTimeAnalysis_id1 , setTimeAnalysis_id2 , setTimeAnalysis_id3 , setTimeAnalysis_id4 , eyeInterval;
 
 //半徑 球的數量
 var i = 0;
-var r = 0, radius = 0;
+var r = 0, radius = 0 , woman = 0 ;;
 /*-----------------------------
 change_toggle =>    0:初始狀態
                     1:無重力
@@ -51,6 +51,9 @@ function tick(e) {
     //  利用按鍵改變模式
     if (change_toggle == 0) {
         $('#logo_div').css("display","block");
+
+        //因為心理測驗會把男生給隱形掉
+        $(".circle").css("opacity", 1);
 
         beforeState = 0;
 
@@ -138,8 +141,13 @@ function tick(e) {
 
         // Push nodes toward their designated focus.
         nodes.forEach(function(o, i) {
-            o.y += (foci[o.setNum[5]].y - o.y) * k;
-            o.x += (foci[o.setNum[5]].x - o.x) * k;
+            if ( o.setNum[5] == ""){
+                $("#circle"+o.index).css("opacity", 0);
+            }
+            else{
+                o.y += (foci[o.setNum[5]].y - o.y) * k;
+                o.x += (foci[o.setNum[5]].x - o.x) * k;
+            }
         });
     }
     else if (change_toggle == 8){
@@ -306,9 +314,21 @@ $('body').keypress(function(e) {
             drop_toggle = 0 ;
         }
     }
-    if (e.keyCode ==115 ){
+    //心理測驗
+    if (e.keyCode ==115 || e.keyCode == 12555){
         console.log("111");
         mentalFlow();
+    }
+    //顯示名子
+    if( e.keyCode == 99 ){
+        if (name_toggle == 0){
+            $('.g_text').css("opacity" , 1) ;
+            name_toggle =1 ;
+        }
+        else{
+            $('.g_text').css("opacity" , 0);
+            name_toggle = 0;
+        }
     }
 });
 
@@ -337,7 +357,7 @@ nodeList.on('child_added', function(snapshot) {
     });
 
     //分析setNum
-    analysis_setNum(person.setNum);
+    analysis_setNum(person.setNum, person.sex);
     console.log("count:"+count[1].position1);
 
     r = parseInt(radius);
@@ -458,9 +478,25 @@ function big(){
             });
     }
 }
-function analysis_setNum(array){
-    console.log("setNum:"+array);
-    for(var c = 0 ; c < array.length ; c++)
+function analysis_setNum(array , sex){
+    if (sex == "woman"){
+        woman++;
+        if ( array[5] == 0)
+            count[5].position0++ ;
+        if ( array[5] == 1)
+            count[5].position1++ ;
+        if ( array[5] == 2)
+            count[5].position2++ ;
+        if ( array[5] == 3)
+            count[5].position3++ ;
+        if ( array[5] == 4)
+            count[5].position4++ ;
+    }
+    else
+        ;
+
+    //不分析最後一題心理測驗
+    for(var c = 0 ; c < array.length-1 ; c++)
     {
         if ( array[c] == 0)
             count[c].position0++ ;
@@ -473,6 +509,8 @@ function analysis_setNum(array){
         if ( array[c] == 4)
             count[c].position4++ ;
     }
+
+
     console.log(count[4].position2);
 }
 
@@ -486,14 +524,14 @@ function show_number(){
     var n3 = setPercent(count[beforeState-2].position3);
     var n4 = setPercent(count[beforeState-2].position4);
 
-    if(beforeState == 2 || beforeState == 3){
+    if(beforeState == 2 || beforeState == 3 || beforeState == 7){
         $('#dataText_0').attr({"x": 425 , "y":520});
         $('#dataText_1').attr({"x": 200 , "y":280});
         $('#dataText_2').attr({"x": 650 , "y":280});
         $('#dataText_3').attr({"x": 200 , "y":630});
         $('#dataText_4').attr({"x": 650 , "y":630});
     }
-    if(beforeState == 4){
+    if(beforeState == 4|| beforeState == 6){
         //與字差70
         $('#dataText_1').attr({"x": 280 , "y":230});
         $('#dataText_2').attr({"x": 710 , "y":380});
@@ -595,7 +633,10 @@ function stopAnalysis(){
 }
 
 function setPercent(num){
-    var answer = (num*100)/i ;
+    if ( beforeState == 7)
+        var answer = (num*100)/woman;
+    else
+        var answer = (num*100)/i ;
     return answer.toFixed(1);
 }
 
@@ -648,8 +689,8 @@ function collide(node) {
 var toggle = 0;
 
 function highlightNodes() {
-
     if (toggle == 0) {
+
 
         //Reduce the opacity of all but the neighbouring nodes
         d3.selectAll(".circle").style("opacity", 0.1);
@@ -657,12 +698,31 @@ function highlightNodes() {
         d3.selectAll(".name_text").style("opacity", 0);
         d3.select(this).style("opacity", 1);
 
+
+        var id = $(this).attr('id').split("circle",3);
+
+        $(".highlightText").css("opacity",1);
+        //console.log(id);
+        $("#highlight_name").text(nodes[id[1]].name);
+        $("#highlight_school").text(nodes[id[1]].school);
+        $("#highlight_department").text(nodes[id[1]].department);
+        $("#highlight_area").text(nodes[id[1]].area+"人");
+        $("#highlight_message").text("我想說: "+nodes[id[1]].message);
+        $("#highlight_mental1").text( "Q1: "+highlightMentalText_1(nodes[id[1]].setNum[4]) );
+        $("#highlight_mental2").text( "Q2: "+highlightMentalText_2(nodes[id[1]].setNum[5])+" 的男人");
+
+        console.log(highlightMentalText_1(nodes[id[1]].setNum[4]));
+
+
         toggle = 1;
 
     } else {
+
+        $(".highlightText").css("opacity",0);
+
         //Put them back to opacity=1
         d3.selectAll(".circle").style("opacity", 1);
-        d3.selectAll(".g_text").style("opacity", 1);
+        d3.selectAll(".g_text").style("opacity", 0);
         toggle = 0;
 
         if (change_toggle == 0 || change_toggle == 1)
@@ -673,17 +733,91 @@ function highlightNodes() {
 
 }
 
+function highlightMentalText_1(text){
+    switch(text){
+        case 1:
+            return "洗完澡後的清爽肥皂香";
+        case 2:
+            return "出爐的帶有濃濃奶味的蛋糕香";
+        case 3:
+            return "花園百花齊放的甜甜花香";
+        case 4:
+            return "剛泡好的義大利濃縮咖啡香";
+    }
+}
+
+function highlightMentalText_2(text){
+    switch(text){
+        case 0:
+            return "一板一眼死硬派";
+        case 1:
+            return "胖子加臉呆";
+        case 2:
+            return "小氣又沒膽子";
+        case 3:
+            return "矮子加秃頭";
+        case 4:
+            return "瘦子加長青春痘";
+        case "":
+            return "只能是男生ㄌ";
+    }
+}
+
 function mentalFlow(){
-    console.log("1yo");
-    if (change_toggle != 6){
+
+    $('#logo_div').css("display","none");
+
+    $('.data_text').attr("stroke","black");
+    $('.data_text').attr("fill","black");
+
+    //隱藏 name_textx
+    $('.name_text').css("opacity", 0);
+    $(".name_text").fadeTo("fast", 1);
+
+    $('.face_eye').css("display","none");
+    $('.face_smile').css("display","none");
+    $('.face_outEye').css("display","none");
+
+    stopAnalysis();
+
+    if (change_toggle != 6 && change_toggle != 8){
+
+        //顯現男生
+        $(".circle").css("opacity", 1);
         console.log("1yo6");
         beforeState = 6;
-        change_toggle == 6 ;
-    }
-    else{
+        change_toggle = 6 ;
+
+        $('#text_1').text("");
+        $('#text_2').text("");
+        $('#text_3').text("");
+        $('#text_4').text("");
+        $('#text_5').text("");
+        $('#text_6').text("");
+        $('#text_7').text("");
+        $('#text_8').text("A. 像剛洗完澡後的清爽肥皂香");
+        $('#text_9').text("B. 像剛出爐的帶有濃濃奶味的蛋糕香");
+        $('#text_10').text("C. 花園百花齊放的甜甜花香");
+        $('#text_11').text("D. 像剛泡好的義大利濃縮咖啡香");
+    }else if (change_toggle == 8){
+        change_toggle = beforeState;
+        drop_toggle = 0;
+    }else{
         console.log("1y7");
         change_toggle = 7;
-        beforeState == 7;
+        beforeState = 7;
+
+        $('#text_1').text("A. 胖子加臉呆");
+        $('#text_2').text("B. 小氣又沒膽子");
+        $('#text_3').text("C. 矮子加秃頭");
+        $('#text_4').text("D. 瘦子加長青春痘");
+        $('#text_5').text("E. 一板一眼死硬派");
+        $('#text_6').text("");
+        $('#text_7').text("");
+        $('#text_8').text("");
+        $('#text_9').text("");
+        $('#text_10').text("");
+        $('#text_11').text("");
     }
 
 }
@@ -732,7 +866,13 @@ function slideFlow() {
         d3.selectAll(".circle").style("fill", function(d) {
                 return color(d.radius);
             }) //原本顏色
+    }else if ( change_toggle == 8){
+        //停止數字分析
+        change_toggle = beforeState;
+        drop_toggle = 0;
     }
+    else if (change_toggle == 6 || change_toggle == 7)
+        mentalFlow();
     else {
         change_toggle++;
 
@@ -804,10 +944,6 @@ function slideFlow() {
                 }) //依照星座去選顏色
         }
         */
-    }
-    if(change_toggle == 8){
-        change_toggle = beforeState;
-        drop_toggle = 0;
     }
 }
 

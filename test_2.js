@@ -1,7 +1,3 @@
-/*---------//
-
- //----------*/
-
 //Firebase 資料庫
 //var myDataRef = new Firebase('https://o47un23yblt.firebaseio-demo.com/');
 var myDataRef = new Firebase('https://flickering-heat-4075.firebaseio.com');
@@ -18,7 +14,7 @@ $('#messageInput').keypress(function(e) {
 
     //可以輸入空白鍵
     if ( e.keyCode == 32 ) {
-    	stop_toggle = 1;
+        stop_toggle = 1;
     }
 
 });
@@ -30,7 +26,7 @@ $('#submit').click(function(e){
 
     console.log("click");
     submit();
-})
+});
 function submit() {
 
     var name = $('#nameInput').val();
@@ -63,43 +59,43 @@ function submit() {
     });
 
     //重新整理
-    //window.location.reload();
+    window.location.reload();
 }
 
 
 function setChangeNum( school , age , area, sex , mental_1 , mental_2)
 {
-	switch ( school )
-	{
-		case "文學院" :
-		case "管理學院" :
-		case "社會科學院" :
-			school = 1 ; break ;
-		case "理學院" :
-		case "工學院" :
-		case "生物科學與科技學院" :
-			school = 2 ; break ;
-		case "電機資訊學院" :
-			school = 3 ; break ;
-		case "規劃與設計學院" :
-		case "醫學院" :
-			school = 4 ; break ;
-		default:
-			school = 0; break ;
-	}
-	switch(area)
-	{
-		case "北部":
-			area = 1 ; break;
-		case "東部":
-			area = 2 ; break;
-		case "中部":
-			area = 3 ; break;
-		case "南部":
-			area = 4 ; break;
-		default:
-			area = 0 ;
-	}
+    switch ( school )
+    {
+        case "文學院" :
+        case "管理學院" :
+        case "社會科學院" :
+            school = 1 ; break ;
+        case "理學院" :
+        case "工學院" :
+        case "生物科學與科技學院" :
+            school = 2 ; break ;
+        case "電機資訊學院" :
+            school = 3 ; break ;
+        case "規劃與設計學院" :
+        case "醫學院" :
+            school = 4 ; break ;
+        default:
+            school = 0; break ;
+    }
+    switch(area)
+    {
+        case "北部":
+            area = 1 ; break;
+        case "東部":
+            area = 2 ; break;
+        case "中部":
+            area = 3 ; break;
+        case "南部":
+            area = 4 ; break;
+        default:
+            area = 0 ;
+    }
     switch(age)
     {
         case "大一":
@@ -146,13 +142,15 @@ function setChangeNum( school , age , area, sex , mental_1 , mental_2)
             mental_2 = 3 ; break;
         case "D":
             mental_2 = 4 ; break;
-        default:
+        case "E":
             mental_2 = 0 ; break;
+        default:
+            mental_2 = '';
+            break;
     }
 
-	var setNum = [school , age , area , sex , mental_1 , mental_2] ;
+    var setNum = [school , age , area , sex , mental_1 , mental_2] ;
 
-	return setNum;
+    return setNum;
 }
-
 

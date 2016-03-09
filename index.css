@@ -75,3 +75,11 @@ body{
   display: none;
   opacity: 0;
 }
+.g_text{
+  opacity: 0;
+}
+.highlightText{
+  opacity: 0;
+  font-weight: 900;
+  font-style: italic;
+}
