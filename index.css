@@ -63,3 +63,15 @@ body{
   font-size: 0px;
   font-family: 'Frijole', cursive;
 }
+.face_eye{
+  display: none;
+  opacity: 0;
+}
+.face_outEye{
+  display: none;
+  opacity: 0;
+}
+.face_smile{
+  display: none;
+  opacity: 0;
+}

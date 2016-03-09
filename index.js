@@ -17,15 +17,16 @@ var count = [{position0:0 , position1:0 , position2:0 , position3:0 , position4:
     {position0:0 , position1:0 , position2:0 , position3:0 , position4:0},
     {position0:0 , position1:0 , position2:0 , position3:0 , position4:0},
     {position0:0 , position1:0 , position2:0 , position3:0 , position4:0},
+    {position0:0 , position1:0 , position2:0 , position3:0 , position4:0},
     {position0:0 , position1:0 , position2:0 , position3:0 , position4:0}];
 
 /* 12點位置座標
 var foci_star = [{x: 400 , y:2000} , {x: -1000 , y: -700},{x: -100 , y: -700} , {x :800 , y :-700} , {x :1700 , y :-700} ,{x: -800 , y: 400},{x: 0 , y: 400} , {x :800 , y :400} , {x :1600 , y :400} , {x: -1000 , y: 1500},{x: -100 , y: 1500} , {x :800 , y :1500} , {x :1700 , y :1500}];
 */
 
-var stop_toggle = 0, change_toggle = 0, autoplay_toggle = 0, color_toggle = 0 , drop_toggle = 0;
+var stop_toggle = 0, change_toggle = 0, autoplay_toggle = 0, color_toggle = 0 , drop_toggle = 0 , eye_toggle = 0;
 var beforeState = 0 ;
-var autoInterval_id , setTimeAnalysis_id0 , setTimeAnalysis_id1 , setTimeAnalysis_id2 , setTimeAnalysis_id3 , setTimeAnalysis_id4;
+var autoInterval_id , setTimeAnalysis_id0 , setTimeAnalysis_id1 , setTimeAnalysis_id2 , setTimeAnalysis_id3 , setTimeAnalysis_id4 , eyeInterval;
 
 //半徑 球的數量
 var i = 0;
@@ -37,7 +38,9 @@ change_toggle =>    0:初始狀態
                     3:系級
                     4:哪裡人
                     5:性別
-                    6:星座分類
+                    6:mental_1
+                    7:mental_2
+                    8:顯示數據
 ------------------------------ */
 
 function tick(e) {
@@ -74,7 +77,13 @@ function tick(e) {
         var q = d3.geom.quadtree(nodes),
             i = 0,
             n = nodes.length;
-        while (++i < n) q.visit(collide(nodes[i]));
+        while (++i < n)
+            q.visit(collide(nodes[i]));
+
+        $('.face_eye').css("display","block");
+        $('.face_smile').css("display","block");
+        $('.face_outEye').css("display","block");
+        $('.name_text').css("opacity", 0);
 
     } else if (change_toggle == 1){
         force.gravity(0);
@@ -115,7 +124,7 @@ function tick(e) {
             o.x += (foci_two[o.setNum[3]].x - o.x) * k;
         });
 
-    } else if (change_toggle == 6) {
+    } else if (change_toggle == 6){
         force.gravity(0.4);
 
         // Push nodes toward their designated focus.
@@ -125,6 +134,15 @@ function tick(e) {
         });
     }
     else if (change_toggle == 7){
+        force.gravity(0.4);
+
+        // Push nodes toward their designated focus.
+        nodes.forEach(function(o, i) {
+            o.y += (foci[o.setNum[5]].y - o.y) * k;
+            o.x += (foci[o.setNum[5]].x - o.x) * k;
+        });
+    }
+    else if (change_toggle == 8){
         force.gravity(0);
 
         nodes.forEach(function(o,i){
@@ -138,8 +156,7 @@ function tick(e) {
         });
     }
 
-
-    d3.selectAll("circle")
+    d3.selectAll(".circle")
         .attr("cx", function(d) {
             return d.x;
         })
@@ -200,6 +217,8 @@ $('body').keypress(function(e) {
 
             if (autoplay_toggle == 1)
                 autoInterval_id = window.setInterval("slideFlow()", 2000);
+
+
 
             stop_toggle = 0;
         }
@@ -271,9 +290,9 @@ $('body').keypress(function(e) {
         drop_toggle = 0 ;
         change_toggle = 0;
     }
-    if(e.keyCode == 97 || e.keyCode == 12551)
+    if(e.keyCode == 97 || e.keyCode == 12551) {
         if ( drop_toggle == 0){
-            change_toggle = 7;
+            change_toggle = 8;
 
             show_number();
             $('.data_text').css("opacity" , 1);
@@ -286,6 +305,11 @@ $('body').keypress(function(e) {
             stopAnalysis();
             drop_toggle = 0 ;
         }
+    }
+    if (e.keyCode ==115 ){
+        console.log("111");
+        mentalFlow();
+    }
 });
 
 // 後端data 傳回來
@@ -306,7 +330,6 @@ nodeList.on('child_added', function(snapshot) {
         'school': person.school,
         'department': person.department,
         'area': person.area,
-        'star': person.star,
         'message': person.message,
         'age': person.age,
         'setNum': person.setNum,
@@ -353,7 +376,39 @@ nodeList.on('child_added', function(snapshot) {
 
     //計算node 數量
     i++;
+
+    if ( i == 25)
+        $(".face_eye").fadeTo("slow",1);
+    if ( i == 35)
+        $("#smile1").fadeTo("slow" , 1);
+    if ( i == 45)
+        $("#smile2").fadeTo("slow" , 1);
+    if ( i == 50){
+        $("#smile2").fadeTo("slow" , 0);
+        $(".face_outEye").fadeTo("slow" , 1);
+        $("#eye1").animate({"r":4 , "cx":367},500);
+        $("#eye2").animate({"r":4 , "cx":467},500);
+
+        eyeMove();
+    }
 });
+
+function eyeMove(){
+    eyeInterval = setInterval(function(){
+        if (eye_toggle == 0){
+            $('#eye1').animate({"cx":353},2000);
+            $('#eye2').animate({"cx":453},2000);
+
+            eye_toggle = 1 ;
+        }
+        else{
+            $('#eye1').animate({"cx":367},2000);
+            $('#eye2').animate({"cx":467},2000);
+
+            eye_toggle = 0 ;
+        }
+    },4000)
+}
 
 //監聽nameList
 nameList.on("child_added",function(snapshot){
@@ -418,6 +473,7 @@ function analysis_setNum(array){
         if ( array[c] == 4)
             count[c].position4++ ;
     }
+    console.log(count[4].position2);
 }
 
 function show_number(){
@@ -617,6 +673,21 @@ function highlightNodes() {
 
 }
 
+function mentalFlow(){
+    console.log("1yo");
+    if (change_toggle != 6){
+        console.log("1yo6");
+        beforeState = 6;
+        change_toggle == 6 ;
+    }
+    else{
+        console.log("1y7");
+        change_toggle = 7;
+        beforeState == 7;
+    }
+
+}
+
 function slideFlow() {
     console.log("change_toggle:" + change_toggle);
 
@@ -629,9 +700,13 @@ function slideFlow() {
     $('.name_text').css("opacity", 0);
     $(".name_text").fadeTo("fast", 1);
 
+    $('.face_eye').css("display","none");
+    $('.face_smile').css("display","none");
+    $('.face_outEye').css("display","none");
+
     stopAnalysis();
 
-    if (change_toggle == 0 || change_toggle == 6 ) {
+    if (change_toggle == 0 ) {
         change_toggle = 2;
 
         beforeState = 2;
@@ -651,10 +726,14 @@ function slideFlow() {
                 return color(d.radius);
             }) //原本顏色
 
-    }else if(change_toggle == 7){
-        change_toggle = beforeState;
-        drop_toggle = 0;
-    }else {
+    }else if ( change_toggle == 5){
+        change_toggle = 0;
+
+        d3.selectAll(".circle").style("fill", function(d) {
+                return color(d.radius);
+            }) //原本顏色
+    }
+    else {
         change_toggle++;
 
         if (change_toggle == 3) {
@@ -705,6 +784,7 @@ function slideFlow() {
                     return color_sex(d.setNum[3]);
                 }) //依照性別去選顏色
         }
+        /*
         if (change_toggle == 6) {
             beforeState = 6;
             $('#text_1').text("");
@@ -723,8 +803,12 @@ function slideFlow() {
                     return color_star(d.setNum[4]);
                 }) //依照星座去選顏色
         }
+        */
     }
-
+    if(change_toggle == 8){
+        change_toggle = beforeState;
+        drop_toggle = 0;
+    }
 }
 
 function setRadius(age) {

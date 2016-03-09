@@ -1,12 +1,9 @@
 /*---------//
-<未除BUG>
-1.若要使用highlight效果，welcome block會擋住node 而無法點擊
-(現在只要先選其他隨便沒被擋住的一顆，即可解除狀況！)
-2.autoplay 完回來change_toggle = 0，會變成狂暴狀態！！？ ==> 按空白鍵可回復....
+
  //----------*/
 
 //Firebase 資料庫
-//公用的 var myDataRef = new Firebase('https://o47un23yblt.firebaseio-demo.com/');
+//var myDataRef = new Firebase('https://o47un23yblt.firebaseio-demo.com/');
 var myDataRef = new Firebase('https://flickering-heat-4075.firebaseio.com');
 var nodeList = myDataRef.child('nodes');
 var nameList = myDataRef.child('nameRecord');
@@ -29,23 +26,25 @@ $('#messageInput').keypress(function(e) {
 $('#submit').click(function(e){
 
     //把原本html動作擋掉
-    e.preventDefault();
+    //e.preventDefault();
+
     console.log("click");
     submit();
 })
 function submit() {
 
-    console.log("submit");
     var name = $('#nameInput').val();
     var sex = $('#sexualInput').val();
     var school = $('#schoolInput').val();
     var department = $('#departmentInput').val();
     var area = $('#whereInput').val();
-    var star = $('#starInput').val();
     var message = $('#messageInput').val();
     var age = $('#ageInput').val();
-    var setNum = setChangeNum(school, age, area, sex, star); //輸入陣列變數
+    var mental_1 = $('input[name="mentalInput_1"]:checked').val();
+    var mental_2 = $('input[name="mentalInput_2"]:checked').val();
+    var setNum = setChangeNum(school, age, area, sex , mental_1 , mental_2); //輸入陣列變數
 
+    console.log(mental_1 +"111" + mental_2);
     //後端資料庫
     nodeList.push({
         'name': name,
@@ -53,7 +52,6 @@ function submit() {
         'school': school,
         'department': department,
         'area': area,
-        'star': star,
         'age': age,
         'message': message,
         'setNum': setNum,
@@ -69,8 +67,7 @@ function submit() {
 }
 
 
-
-function setChangeNum( school , age , area, sex ,star)
+function setChangeNum( school , age , area, sex , mental_1 , mental_2)
 {
 	switch ( school )
 	{
@@ -126,29 +123,34 @@ function setChangeNum( school , age , area, sex ,star)
         default:
             sex = 0 ;
     }
-	switch(star)
-	{
-		case "牡羊座" :
-		case "獅子座" :
-		case "射手座" :
-			star = 1 ; break;
-		case "金牛座" :
-		case "處女座" :
-		case "摩羯座" :
-			star = 2 ; break;
-		case "雙子座" :
-		case "天秤座" :
-		case "水瓶座" :
-			star = 3 ; break;
-		case "雙魚座" :
-		case "巨蟹座" :
-		case "天蠍座" :
-			star = 4 ; break;
-		default :
-			star = 0 ; break;
-	}
+    switch(mental_1)
+    {
+        case "A":
+            mental_1 = 1 ; break;
+        case "B":
+            mental_1 = 2 ; break;
+        case "C":
+            mental_1 = 3 ; break;
+        case "D":
+            mental_1 = 4 ; break;
+        default:
+            mental_1 = 0 ; break;
+    }
+    switch(mental_2)
+    {
+        case "A":
+            mental_2 = 1 ; break;
+        case "B":
+            mental_2 = 2 ; break;
+        case "C":
+            mental_2 = 3 ; break;
+        case "D":
+            mental_2 = 4 ; break;
+        default:
+            mental_2 = 0 ; break;
+    }
 
-	var setNum = [school , age , area , sex ,star] ;
+	var setNum = [school , age , area , sex , mental_1 , mental_2] ;
 
 	return setNum;
 }
