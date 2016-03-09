@@ -4,7 +4,8 @@ A funny game to draw a name with firebase, and analysize some info.
 		一個用firebase做的簡易報名系統，一顆球即代表一個人，分析的資料越多，可呈現的資訊越多！
 
 ## 注意
-		請用自己的firebase資料庫才不會與別人撞到
+		1.請用自己的firebase資料庫才不會與別人撞到
+		2.form.html 為問題表單 / index.html 為圖所跑出的網頁
 
 ## Function
 - Z : 暫停/開始
