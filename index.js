@@ -141,7 +141,8 @@ function tick(e) {
 
         // Push nodes toward their designated focus.
         nodes.forEach(function(o, i) {
-            if ( o.setNum[5] == ""){
+            //去掉男生、是女生可是填男生的
+            if ( o.sex == "man" || o.setNum[5] == ""){
                 $("#circle"+o.index).css("opacity", 0);
             }
             else{
@@ -479,7 +480,8 @@ function big(){
     }
 }
 function analysis_setNum(array , sex){
-    if (sex == "woman"){
+    //只取女生且"有填"第六題的
+    if (sex == "woman" && array[5] != ""){
         woman++;
         if ( array[5] == 0)
             count[5].position0++ ;
@@ -633,8 +635,9 @@ function stopAnalysis(){
 }
 
 function setPercent(num){
-    if ( beforeState == 7)
+    if ( beforeState == 7){
         var answer = (num*100)/woman;
+    }
     else
         var answer = (num*100)/i ;
     return answer.toFixed(1);
